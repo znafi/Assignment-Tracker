@@ -10,32 +10,27 @@ const config: ThemeConfig = {
 
 const theme = extendTheme({
   config,
-  colors: {
-    gray: {
-      "50": "#F7FAFC",
-      "100": "#EDF2F7",
-      "200": "#E2E8F0",
-      "300": "#CBD5E0",
-      "400": "#A0AEC0",
-      "500": "#718096",
-      "600": "#4A5568",
-      "700": "#2D3748",
-      "800": "#1A202C",
-      "900": "#171923"
-    }
-  },
   styles: {
-    global: (props: any) => ({
-      body: {
-        bg: 'gray.900',
-        color: 'whiteAlpha.900',
+    global: {
+      'html, body': {
+        backgroundColor: 'gray.900',
+        color: 'white',
       },
-    }),
+    },
   },
   components: {
     Button: {
       defaultProps: {
         colorScheme: 'blue',
+      },
+      variants: {
+        solid: {
+          bg: 'blue.500',
+          color: 'white',
+          _hover: {
+            bg: 'blue.600',
+          },
+        },
       },
     },
     Modal: {
@@ -43,38 +38,62 @@ const theme = extendTheme({
         dialog: {
           bg: 'gray.800',
         },
+        header: {
+          color: 'white',
+        },
+        body: {
+          color: 'white',
+        },
+        footer: {
+          color: 'white',
+        },
       },
     },
     Input: {
-      defaultProps: {
-        focusBorderColor: 'blue.400',
-      },
       variants: {
         outline: {
           field: {
             bg: 'gray.800',
             borderColor: 'gray.600',
+            color: 'white',
             _hover: {
               borderColor: 'gray.500',
             },
+            _focus: {
+              borderColor: 'blue.400',
+              boxShadow: '0 0 0 1px var(--chakra-colors-blue-400)',
+            },
           },
         },
+      },
+      defaultProps: {
+        variant: 'outline',
       },
     },
     Select: {
-      defaultProps: {
-        focusBorderColor: 'blue.400',
-      },
       variants: {
         outline: {
           field: {
             bg: 'gray.800',
             borderColor: 'gray.600',
+            color: 'white',
             _hover: {
               borderColor: 'gray.500',
             },
+            _focus: {
+              borderColor: 'blue.400',
+              boxShadow: '0 0 0 1px var(--chakra-colors-blue-400)',
+            },
           },
         },
+      },
+      defaultProps: {
+        variant: 'outline',
+      },
+    },
+    FormLabel: {
+      baseStyle: {
+        color: 'gray.200',
       },
     },
   },
