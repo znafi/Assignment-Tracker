@@ -1,11 +1,7 @@
-'use client'
-
+import Link from 'next/link'
 import { Box, Heading, Text, Button } from '@chakra-ui/react'
-import { useRouter } from 'next/navigation'
 
 export default function NotFound() {
-  const router = useRouter()
-
   return (
     <Box textAlign="center" py={10} px={6}>
       <Heading
@@ -24,15 +20,17 @@ export default function NotFound() {
         The page you&apos;re looking for does not seem to exist
       </Text>
 
-      <Button
-        colorScheme="blue"
-        bgGradient="linear(to-r, blue.400, purple.500)"
-        color="white"
-        variant="solid"
-        onClick={() => router.push('/')}
-      >
-        Go to Home
-      </Button>
+      <Link href="/" passHref>
+        <Button
+          as="a"
+          colorScheme="blue"
+          bgGradient="linear(to-r, blue.400, purple.500)"
+          color="white"
+          variant="solid"
+        >
+          Go to Home
+        </Button>
+      </Link>
     </Box>
   )
 }

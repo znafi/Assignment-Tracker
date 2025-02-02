@@ -1,99 +1,32 @@
-import { extendTheme, type ThemeConfig } from '@chakra-ui/react'
-
-const config: ThemeConfig = {
-  initialColorMode: 'dark',
-  useSystemColorMode: false,
-}
+import { extendTheme } from '@chakra-ui/react'
 
 const theme = extendTheme({
-  config,
+  config: {
+    initialColorMode: 'dark',
+    useSystemColorMode: false,
+  },
   styles: {
     global: {
-      body: {
-        bg: 'gray.900',
+      'html, body': {
+        backgroundColor: '#1A202C',
         color: 'white',
       },
     },
   },
-  components: {
-    Button: {
-      defaultProps: {
-        colorScheme: 'blue',
-      },
-      variants: {
-        solid: {
-          bg: 'blue.500',
-          color: 'white',
-          _hover: {
-            bg: 'blue.600',
-          },
-        },
-      },
-    },
-    Modal: {
-      baseStyle: {
-        dialog: {
-          bg: 'gray.800',
-        },
-        header: {
-          color: 'white',
-        },
-        body: {
-          color: 'white',
-        },
-        footer: {
-          color: 'white',
-        },
-      },
-    },
-    Input: {
-      variants: {
-        outline: {
-          field: {
-            bg: 'gray.800',
-            borderColor: 'gray.600',
-            color: 'white',
-            _hover: {
-              borderColor: 'gray.500',
-            },
-            _focus: {
-              borderColor: 'blue.400',
-              boxShadow: '0 0 0 1px var(--chakra-colors-blue-400)',
-            },
-          },
-        },
-      },
-      defaultProps: {
-        variant: 'outline',
-      },
-    },
-    Select: {
-      variants: {
-        outline: {
-          field: {
-            bg: 'gray.800',
-            borderColor: 'gray.600',
-            color: 'white',
-            _hover: {
-              borderColor: 'gray.500',
-            },
-            _focus: {
-              borderColor: 'blue.400',
-              boxShadow: '0 0 0 1px var(--chakra-colors-blue-400)',
-            },
-          },
-        },
-      },
-      defaultProps: {
-        variant: 'outline',
-      },
-    },
-    FormLabel: {
-      baseStyle: {
-        color: 'gray.200',
-      },
-    },
-  },
+  colors: {
+    gray: {
+      "50": "#F7FAFC",
+      "100": "#EDF2F7", 
+      "200": "#E2E8F0",
+      "300": "#CBD5E0",
+      "400": "#A0AEC0",
+      "500": "#718096",
+      "600": "#4A5568",
+      "700": "#2D3748",
+      "800": "#1A202C",
+      "900": "#171923"
+    }
+  }
 })
 
 export default theme
