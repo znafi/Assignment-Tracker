@@ -35,7 +35,7 @@ export default function Home() {
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [userEmail, setUserEmail] = useState<string>('');
-  const bgColor = useColorModeValue('gray.50', 'gray.900');
+  const bgColor = useColorModeValue('gray.900', 'gray.900');
   const router = useRouter();
   const toast = useToast();
 
