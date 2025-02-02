@@ -2,45 +2,27 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
-  // Get the pathname of the request
   const path = request.nextUrl.pathname
+  const token = request.cookies.get('token')?.value
 
-  // Skip middleware for API routes and static files
-  if (path.startsWith('/api/') || 
-      path.startsWith('/_next/') || 
-      path.includes('.')) {
+  // Allow all API routes and static files
+  if (path.startsWith('/api/') || path.startsWith('/_next/') || path.includes('.')) {
     return NextResponse.next()
   }
 
-  // Get token from cookies
-  const token = request.cookies.get('token')?.value
-
-  // Public routes that don't require authentication
-  const publicRoutes = ['/login', '/register']
-  
-  // If we're on a public route and have a token, redirect to home
-  if (publicRoutes.includes(path) && token) {
+  // If we have a token and try to access login/register, redirect to home
+  if (token && (path === '/login' || path === '/register')) {
     return NextResponse.redirect(new URL('/', request.url))
   }
 
-  // If we're not on a public route and don't have a token, redirect to login
-  if (!publicRoutes.includes(path) && !token && path !== '/') {
+  // If we don't have a token and try to access protected routes, redirect to login
+  if (!token && path !== '/login' && path !== '/register') {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
   return NextResponse.next()
 }
 
-// Only run middleware on specific paths
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
-  ],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
 }
