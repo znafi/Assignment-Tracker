@@ -26,15 +26,26 @@ export type Assignment = {
 
 export default function Home() {
   const [assignments, setAssignments] = useState<Assignment[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const bgColor = useColorModeValue('gray.50', 'gray.900');
   const router = useRouter();
 
   useEffect(() => {
-    // Check if user is authenticated
-    const token = localStorage.getItem('token');
-    if (!token) {
-      router.push('/auth');
-    }
+    const checkAuth = () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          router.replace('/auth');
+        } else {
+          setIsLoading(false);
+        }
+      } catch (error) {
+        console.error('Auth check error:', error);
+        router.replace('/auth');
+      }
+    };
+
+    checkAuth();
   }, [router]);
 
   const addAssignment = (assignment: Omit<Assignment, 'id'>) => {
@@ -55,29 +66,34 @@ export default function Home() {
     setAssignments(assignments.filter(a => a.id !== id));
   };
 
+  // Don't render anything while checking authentication
+  if (isLoading) {
+    return null;
+  }
+
   return (
     <Box minH="100vh" bg={bgColor} py={8}>
       <Container maxW="container.xl">
-        <VStack spacing={8} align="stretch">
-          <Heading as="h1" size="2xl" textAlign="center" color="blue.500">
-            Assignment Dashboard
-          </Heading>
-
+        <VStack spacing={8}>
+          <Heading>Assignment Dashboard</Heading>
           <Grid
-            templateColumns={{ base: '1fr', lg: '1fr 1fr' }}
+            templateColumns={{ base: '1fr', lg: 'repeat(2, 1fr)' }}
             gap={8}
+            w="full"
           >
-            <AssignmentStats assignments={assignments} />
-            <AssignmentChart assignments={assignments} />
+            <VStack spacing={8} alignItems="stretch">
+              <AddAssignment onAdd={addAssignment} />
+              <AssignmentList
+                assignments={assignments}
+                onUpdate={updateAssignment}
+                onDelete={deleteAssignment}
+              />
+            </VStack>
+            <VStack spacing={8} alignItems="stretch">
+              <AssignmentStats assignments={assignments} />
+              <AssignmentChart assignments={assignments} />
+            </VStack>
           </Grid>
-
-          <AddAssignment onAdd={addAssignment} />
-          
-          <AssignmentList
-            assignments={assignments}
-            onUpdate={updateAssignment}
-            onDelete={deleteAssignment}
-          />
         </VStack>
       </Container>
     </Box>

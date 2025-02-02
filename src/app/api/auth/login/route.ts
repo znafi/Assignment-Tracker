@@ -13,7 +13,7 @@ export async function POST(request: Request) {
       // For now, we'll just create a mock token
       const mockToken = Buffer.from(email).toString('base64');
       
-      return NextResponse.json(
+      const response = NextResponse.json(
         { 
           success: true, 
           message: 'Login successful',
@@ -21,6 +21,19 @@ export async function POST(request: Request) {
         },
         { status: 200 }
       );
+
+      // Set the token as an HTTP-only cookie
+      response.cookies.set({
+        name: 'token',
+        value: mockToken,
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 60 * 60 * 24 * 7 // 1 week
+      });
+
+      return response;
     }
 
     return NextResponse.json(

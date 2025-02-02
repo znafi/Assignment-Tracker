@@ -20,6 +20,7 @@ export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const toast = useToast();
   const bgColor = useColorModeValue('gray.50', 'gray.900');
@@ -27,6 +28,7 @@ export default function AuthPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     
     try {
       const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
@@ -41,16 +43,12 @@ export default function AuthPage() {
       const data = await response.json();
 
       if (response.ok) {
-        if (data.token) {
-          localStorage.setItem('token', data.token);
-        }
         toast({
           title: isLogin ? 'Login successful!' : 'Account created!',
           status: 'success',
           duration: 3000,
         });
-        router.push('/');
-        router.refresh(); // Force a refresh to trigger the authentication check
+        router.replace('/');
       } else {
         throw new Error(data.message || 'Something went wrong');
       }
@@ -61,6 +59,8 @@ export default function AuthPage() {
         status: 'error',
         duration: 3000,
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -109,21 +109,29 @@ export default function AuthPage() {
                   </FormControl>
                 </Stack>
 
-                <Button type="submit" colorScheme="blue" size="lg" fontSize="md">
+                <Button
+                  type="submit"
+                  colorScheme="blue"
+                  size="lg"
+                  fontSize="md"
+                  isLoading={isLoading}
+                >
                   {isLogin ? 'Sign in' : 'Sign up'}
                 </Button>
 
                 <Stack spacing="6">
-                  <Text textAlign="center">
-                    {isLogin ? "Don't have an account? " : 'Already have an account? '}
+                  <Stack spacing="3" direction="row" justify="center">
+                    <Text>
+                      {isLogin ? "Don't have an account?" : 'Already have an account?'}
+                    </Text>
                     <Button
                       variant="link"
                       colorScheme="blue"
                       onClick={() => setIsLogin(!isLogin)}
                     >
-                      {isLogin ? 'Sign up' : 'Log in'}
+                      {isLogin ? 'Sign up' : 'Sign in'}
                     </Button>
-                  </Text>
+                  </Stack>
                 </Stack>
               </Stack>
             </form>
