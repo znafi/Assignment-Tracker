@@ -41,12 +41,16 @@ export default function AuthPage() {
       const data = await response.json();
 
       if (response.ok) {
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+        }
         toast({
           title: isLogin ? 'Login successful!' : 'Account created!',
           status: 'success',
           duration: 3000,
         });
         router.push('/');
+        router.refresh(); // Force a refresh to trigger the authentication check
       } else {
         throw new Error(data.message || 'Something went wrong');
       }

@@ -9,13 +9,15 @@ export async function POST(request: Request) {
     if (email && password) {
       // In a real app, you would:
       // 1. Verify credentials against database
-      // 2. Create a session or JWT token
-      // 3. Set cookies or return token
+      // 2. Create a proper JWT token
+      // For now, we'll just create a mock token
+      const mockToken = Buffer.from(email).toString('base64');
       
       return NextResponse.json(
         { 
           success: true, 
-          message: 'Login successful'
+          message: 'Login successful',
+          token: mockToken
         },
         { status: 200 }
       );
