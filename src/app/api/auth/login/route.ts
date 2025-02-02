@@ -17,7 +17,8 @@ export async function POST(request: Request) {
         { 
           success: true, 
           message: 'Login successful',
-          token: mockToken
+          token: mockToken,
+          user: { email }
         },
         { status: 200 }
       );
@@ -27,6 +28,16 @@ export async function POST(request: Request) {
         name: 'token',
         value: mockToken,
         httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 60 * 60 * 24 * 7 // 1 week
+      });
+
+      // Set user email in a readable cookie (non-http-only)
+      response.cookies.set({
+        name: 'user_email',
+        value: email,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
         path: '/',

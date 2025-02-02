@@ -11,6 +11,10 @@ import {
   useColorModeValue,
   Spinner,
   Center,
+  Button,
+  HStack,
+  Text,
+  useToast,
 } from '@chakra-ui/react';
 import AssignmentList from '@/components/AssignmentList';
 import AssignmentStats from '@/components/AssignmentStats';
@@ -29,8 +33,10 @@ export type Assignment = {
 export default function Home() {
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [userEmail, setUserEmail] = useState<string>('');
   const bgColor = useColorModeValue('gray.50', 'gray.900');
   const router = useRouter();
+  const toast = useToast();
 
   useEffect(() => {
     // Check if we're in a browser environment
@@ -42,6 +48,13 @@ export default function Home() {
           if (!response.ok) {
             router.replace('/auth');
           } else {
+            // Get user email from cookie
+            const cookies = document.cookie.split(';');
+            const userEmailCookie = cookies.find(cookie => cookie.trim().startsWith('user_email='));
+            if (userEmailCookie) {
+              const email = decodeURIComponent(userEmailCookie.split('=')[1]);
+              setUserEmail(email);
+            }
             setIsLoading(false);
           }
         } catch (error) {
@@ -53,6 +66,35 @@ export default function Home() {
       checkAuth();
     }
   }, [router]);
+
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        toast({
+          title: 'Logged out successfully',
+          status: 'success',
+          duration: 3000,
+        });
+        router.replace('/auth');
+      } else {
+        throw new Error('Logout failed');
+      }
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to logout',
+        status: 'error',
+        duration: 3000,
+      });
+    }
+  };
 
   const addAssignment = (assignment: Omit<Assignment, 'id'>) => {
     const newAssignment = {
@@ -92,7 +134,23 @@ export default function Home() {
     <Box minH="100vh" bg={bgColor} py={8}>
       <Container maxW="container.xl">
         <VStack spacing={8}>
-          <Heading>Assignment Dashboard</Heading>
+          <HStack w="full" justify="space-between" align="center">
+            <VStack align="flex-start" spacing={1}>
+              <Heading size="lg">Assignment Dashboard</Heading>
+              {userEmail && (
+                <Text color="gray.600">
+                  Welcome, {userEmail}
+                </Text>
+              )}
+            </VStack>
+            <Button
+              colorScheme="red"
+              variant="outline"
+              onClick={handleLogout}
+            >
+              Logout
+            </Button>
+          </HStack>
           <Grid
             templateColumns={{ base: '1fr', lg: 'repeat(2, 1fr)' }}
             gap={8}
