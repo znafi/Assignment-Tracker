@@ -5,6 +5,11 @@ export function middleware(request: NextRequest) {
   // Get the pathname of the request (e.g. /, /protected, /auth)
   const path = request.nextUrl.pathname
 
+  // Skip middleware for API routes
+  if (path.startsWith('/api/')) {
+    return NextResponse.next()
+  }
+
   // If it's the auth page and we have a token, redirect to home page
   if (path === '/auth') {
     if (request.cookies.has('token')) {
@@ -23,5 +28,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
 }

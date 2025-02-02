@@ -9,6 +9,8 @@ import {
   VStack,
   Grid,
   useColorModeValue,
+  Spinner,
+  Center,
 } from '@chakra-ui/react';
 import AssignmentList from '@/components/AssignmentList';
 import AssignmentStats from '@/components/AssignmentStats';
@@ -31,21 +33,25 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    const checkAuth = () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) {
+    // Check if we're in a browser environment
+    if (typeof window !== 'undefined') {
+      const checkAuth = async () => {
+        try {
+          // Try to fetch user data or validate session
+          const response = await fetch('/api/auth/validate');
+          if (!response.ok) {
+            router.replace('/auth');
+          } else {
+            setIsLoading(false);
+          }
+        } catch (error) {
+          console.error('Auth check error:', error);
           router.replace('/auth');
-        } else {
-          setIsLoading(false);
         }
-      } catch (error) {
-        console.error('Auth check error:', error);
-        router.replace('/auth');
-      }
-    };
+      };
 
-    checkAuth();
+      checkAuth();
+    }
   }, [router]);
 
   const addAssignment = (assignment: Omit<Assignment, 'id'>) => {
@@ -66,9 +72,20 @@ export default function Home() {
     setAssignments(assignments.filter(a => a.id !== id));
   };
 
-  // Don't render anything while checking authentication
   if (isLoading) {
-    return null;
+    return (
+      <Box minH="100vh" bg={bgColor} py={8}>
+        <Center h="100vh">
+          <Spinner
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            color="blue.500"
+            size="xl"
+          />
+        </Center>
+      </Box>
+    );
   }
 
   return (
