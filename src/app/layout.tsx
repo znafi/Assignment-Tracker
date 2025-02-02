@@ -1,4 +1,8 @@
-import { ChakraProvider } from '@chakra-ui/react'
+import { ChakraProvider, ColorModeScript } from '@chakra-ui/react'
+import { Providers } from './providers'
+import { Inter } from 'next/font/google'
+
+const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
   title: 'Assignment Dashboard',
@@ -12,9 +16,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
+      <body className={inter.className}>
+        <ColorModeScript initialColorMode="dark" />
         <ChakraProvider>
-          {children}
+          <Providers>
+            {children}
+          </Providers>
         </ChakraProvider>
       </body>
     </html>

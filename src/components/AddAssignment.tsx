@@ -16,6 +16,8 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
+  HStack,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { Assignment } from '@/app/page';
 
@@ -29,17 +31,26 @@ export default function AddAssignment({ onAdd }: AddAssignmentProps) {
     title: '',
     subject: '',
     dueDate: '',
+    dueTime: '23:59',
     priority: 'Medium' as Assignment['priority'],
     status: 'Not Started' as Assignment['status'],
   });
 
+  const modalBg = useColorModeValue('white', 'gray.800');
+  const inputBg = useColorModeValue('white', 'gray.700');
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onAdd(newAssignment);
+    const combinedDueDate = `${newAssignment.dueDate}T${newAssignment.dueTime}`;
+    onAdd({
+      ...newAssignment,
+      dueDate: combinedDueDate,
+    });
     setNewAssignment({
       title: '',
       subject: '',
       dueDate: '',
+      dueTime: '23:59',
       priority: 'Medium',
       status: 'Not Started',
     });
@@ -48,13 +59,22 @@ export default function AddAssignment({ onAdd }: AddAssignmentProps) {
 
   return (
     <>
-      <Button colorScheme="blue" onClick={onOpen}>
+      <Button 
+        colorScheme="blue" 
+        onClick={onOpen}
+        size="lg"
+        w="full"
+        bgGradient="linear(to-r, blue.400, purple.500)"
+        _hover={{
+          bgGradient: "linear(to-r, blue.500, purple.600)",
+        }}
+      >
         Add New Assignment
       </Button>
 
       <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
+        <ModalOverlay backdropFilter="blur(4px)" />
+        <ModalContent bg={modalBg}>
           <ModalHeader>Add New Assignment</ModalHeader>
           <ModalCloseButton />
           <form onSubmit={handleSubmit}>
@@ -67,6 +87,7 @@ export default function AddAssignment({ onAdd }: AddAssignmentProps) {
                     onChange={(e) =>
                       setNewAssignment({ ...newAssignment, title: e.target.value })
                     }
+                    bg={inputBg}
                   />
                 </FormControl>
 
@@ -80,22 +101,41 @@ export default function AddAssignment({ onAdd }: AddAssignmentProps) {
                         subject: e.target.value,
                       })
                     }
+                    bg={inputBg}
                   />
                 </FormControl>
 
-                <FormControl isRequired>
-                  <FormLabel>Due Date</FormLabel>
-                  <Input
-                    type="date"
-                    value={newAssignment.dueDate}
-                    onChange={(e) =>
-                      setNewAssignment({
-                        ...newAssignment,
-                        dueDate: e.target.value,
-                      })
-                    }
-                  />
-                </FormControl>
+                <HStack w="full" spacing={4}>
+                  <FormControl isRequired>
+                    <FormLabel>Due Date</FormLabel>
+                    <Input
+                      type="date"
+                      value={newAssignment.dueDate}
+                      onChange={(e) =>
+                        setNewAssignment({
+                          ...newAssignment,
+                          dueDate: e.target.value,
+                        })
+                      }
+                      bg={inputBg}
+                    />
+                  </FormControl>
+
+                  <FormControl isRequired>
+                    <FormLabel>Time</FormLabel>
+                    <Input
+                      type="time"
+                      value={newAssignment.dueTime}
+                      onChange={(e) =>
+                        setNewAssignment({
+                          ...newAssignment,
+                          dueTime: e.target.value,
+                        })
+                      }
+                      bg={inputBg}
+                    />
+                  </FormControl>
+                </HStack>
 
                 <FormControl>
                   <FormLabel>Priority</FormLabel>
@@ -107,10 +147,29 @@ export default function AddAssignment({ onAdd }: AddAssignmentProps) {
                         priority: e.target.value as Assignment['priority'],
                       })
                     }
+                    bg={inputBg}
                   >
                     <option value="Low">Low</option>
                     <option value="Medium">Medium</option>
                     <option value="High">High</option>
+                  </Select>
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel>Status</FormLabel>
+                  <Select
+                    value={newAssignment.status}
+                    onChange={(e) =>
+                      setNewAssignment({
+                        ...newAssignment,
+                        status: e.target.value as Assignment['status'],
+                      })
+                    }
+                    bg={inputBg}
+                  >
+                    <option value="Not Started">Not Started</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
                   </Select>
                 </FormControl>
               </VStack>
@@ -120,7 +179,14 @@ export default function AddAssignment({ onAdd }: AddAssignmentProps) {
               <Button variant="ghost" mr={3} onClick={onClose}>
                 Cancel
               </Button>
-              <Button colorScheme="blue" type="submit">
+              <Button 
+                colorScheme="blue"
+                type="submit"
+                bgGradient="linear(to-r, blue.400, purple.500)"
+                _hover={{
+                  bgGradient: "linear(to-r, blue.500, purple.600)",
+                }}
+              >
                 Add Assignment
               </Button>
             </ModalFooter>
