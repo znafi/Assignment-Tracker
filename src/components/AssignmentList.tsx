@@ -32,6 +32,10 @@ interface AssignmentListProps {
   onDelete: (id: string) => void;
 }
 
+type EditableAssignment = Assignment & {
+  dueTime: string;
+};
+
 export default function AssignmentList({
   assignments,
   onUpdate,
@@ -41,7 +45,7 @@ export default function AssignmentList({
     null
   );
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [editedAssignment, setEditedAssignment] = useState<Assignment | null>(
+  const [editedAssignment, setEditedAssignment] = useState<EditableAssignment | null>(
     null
   );
 
@@ -63,9 +67,10 @@ export default function AssignmentList({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (editedAssignment) {
-      const updatedAssignment = {
-        ...editedAssignment,
-        dueDate: `${editedAssignment.dueDate}T${editedAssignment.dueTime || '23:59'}`,
+      const { dueTime, ...rest } = editedAssignment;
+      const updatedAssignment: Assignment = {
+        ...rest,
+        dueDate: `${editedAssignment.dueDate}T${dueTime}`,
       };
       onUpdate(updatedAssignment);
       onClose();

@@ -26,6 +26,7 @@ export type Assignment = {
   title: string;
   subject: string;
   dueDate: string;
+  dueTime?: string;
   priority: 'Low' | 'Medium' | 'High';
   status: 'Not Started' | 'In Progress' | 'Completed';
 };
